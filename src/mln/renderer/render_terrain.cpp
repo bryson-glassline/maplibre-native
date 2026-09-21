@@ -669,6 +669,10 @@ float RenderTerrain::getElevation(const UnwrappedTileID& tileID_, float x, float
     if (!demSource) {
         return 0.0f;
     }
+    UnwrappedTileID tileID = tileID_;
+    if (!normalizeTileCoordinates(tileID, x, y)) {
+        return 0.0f;
+    }
 
     // Deepest loaded DEM tile (with data) matching the requested tile or an ancestor of it
     const LoadedDEMTile* best = nullptr;
@@ -744,6 +748,7 @@ double RenderTerrain::getElevationForLatLng(const LatLng& latLng) const {
     const auto localX = static_cast<float>((fx - static_cast<double>(tx)) * util::EXTENT);
     const auto localY = static_cast<float>((fy - static_cast<double>(ty)) * util::EXTENT);
     return getElevationWithExaggeration(sampleTile, localX, localY);
+}
 
 std::optional<std::function<float(const Point<float>&)>> RenderTerrain::elevationSampler(
     const UnwrappedTileID& tileID) const {
